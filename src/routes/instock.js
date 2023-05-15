@@ -11,22 +11,22 @@ mongoose
   .catch((e) => console.log("Error occurred" + e));
 
 // return all stocks
-router.get("/", function (req, res) {
-  res.json({
-    hi: "hello",
-  });
+router.get("/", async function (req, res) {
+
+  const allData = await InStockModel.find({});
+  res.json(allData);
 });
 
 router.post("/addNew", function(req, res){
-  console.log(req.body.transactionType);
+  console.log(req.body);
 
   let isSaved = false;
   const transactionType = req.body["Transaction Type"].toLowerCase();
 
-  console.log(transactionType);
-
   const instock = new InStockModel({
-    [transactionType]: req.body
+    transactionType: transactionType,
+    details: req.body.details,
+    
   });
 
   instock.save().then(() => isSaved = true).catch(()=> isSaved = false);
