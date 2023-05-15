@@ -12,7 +12,8 @@ mongoose
 
 // return all store names
 router.get("/", async function (req, res) {
-  
+  const allData = await StoreModel.find({});
+  res.json(allData);
 });
 
 router.post("/addNew", async function (req, res) {
