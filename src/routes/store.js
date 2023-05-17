@@ -3,6 +3,7 @@ const mongoose = require("mongoose");
 const router = express.Router();
 
 const StoreModel = require("../models/store_model");
+const UserModel = require("../models/user_model");
 
 // connecting to mongodb
 mongoose
@@ -29,7 +30,9 @@ router.post("/addNew", async function (req, res) {
 
   try {
     await newStore.save();
-    isSaved = true;
+
+    isSaved = await addStoreID(newStore._id);
+    
     res.json({
       isSaved: isSaved,
     });
@@ -38,5 +41,20 @@ router.post("/addNew", async function (req, res) {
     res.status(500).send("Error occurred while saving the store.");
   }
 });
+
+async function addStoreID(storeId){
+
+  try {
+    await UserModel.updateOne(
+      { name: "Sulabh Shrestha" }, // this is temporary
+      { $push: { storeNames: storeId } }
+    );
+    return true;
+  } catch (error) {
+    console.error(error);
+    return false;
+  }
+
+}
 
 module.exports = router;
