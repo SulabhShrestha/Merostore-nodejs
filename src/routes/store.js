@@ -29,12 +29,13 @@ router.post("/addNew", async function (req, res) {
   });
 
   try {
-    await newStore.save();
+    let addedStore = await newStore.save(); // saved store is returned
 
     isSaved = await addStoreID(newStore._id);
     
     res.json({
       isSaved: isSaved,
+      newStore: addedStore,
     });
   } catch (error) {
     console.error(error);
