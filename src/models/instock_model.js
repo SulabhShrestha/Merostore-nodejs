@@ -3,7 +3,7 @@ const mongoose = require("mongoose");
 const InStockSchema = new mongoose.Schema({
 //   uid: String,
   
-  storeName: String,
+  storeName: String, 
   transactionType: {
     type: String, 
     enum: ["cash", "credit", "prepaid", "return"],

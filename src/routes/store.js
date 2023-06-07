@@ -1,15 +1,11 @@
 const express = require("express");
-const mongoose = require("mongoose");
+
 const router = express.Router();
 
 const StoreModel = require("../models/store_model");
 const UserModel = require("../models/user_model");
+const mongoose = require("../db_connection");
 
-// connecting to mongodb
-mongoose
-  .connect("mongodb://127.0.0.1:27017/MeroStore")
-  .then(() => console.log("Connected successfully."))
-  .catch((e) => console.log("Error occurred" + e));
 
 // return all store names
 router.get("/", async function (req, res) {

@@ -1,15 +1,8 @@
 const express = require("express");
-const mongoose = require("mongoose");
 const router = express.Router();
 
 const UserModel = require("../models/user_model");
-
-// connecting to mongodb
-mongoose
-  .connect("mongodb://127.0.0.1:27017/MeroStore")
-  .then(() => console.log("Connected successfully."))
-  .catch((e) => console.log("Error occurred" + e));
-
+const mongoose = require("../db_connection");
 
 
 router.post("/create", function (req, res) {

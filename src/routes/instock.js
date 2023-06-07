@@ -1,15 +1,9 @@
 const express = require("express");
-const mongoose = require("mongoose");
 const router = express.Router();
 
 const InStockModel = require("../models/instock_model");
 const UserModel = require("../models/user_model");
-
-// connecting to mongodb
-mongoose
-  .connect("mongodb://127.0.0.1:27017/MeroStore")
-  .then(() => console.log("Connected successfully."))
-  .catch((e) => console.log("Error occurred" + e));
+const mongoose = require("../db_connection");
 
 // return all stocks
 router.get("/", async function (req, res) {
@@ -23,11 +17,12 @@ router.post("/addNew", async function(req, res){
 
   let isSaved = false;
   const transactionType = req.body["Transaction Type"].toLowerCase();
+  const storeName = req.body["Store Name"].toLowerCase();
 
   const instock = new InStockModel({
-    transactionType: transactionType,
+    transactionType,
+    storeName,
     details: req.body.details,
-    
   });
 
   // trying to save
