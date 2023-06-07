@@ -5,11 +5,23 @@ const InStockModel = require("../models/instock_model");
 const UserModel = require("../models/user_model");
 const mongoose = require("../db_connection");
 
-// return all stocks
+// returns all stocks
 router.get("/", async function (req, res) {
 
   const allData = await InStockModel.find({});
   res.json(allData);
+});
+
+// returns all materialNames of specific store
+router.get("/materialNames/:storeName", async function (req, res) {
+  console.log("Storename" + req.params.storeName);
+  const allData = await InStockModel.find({storeName: req.params.storeName});
+
+  console.log("AllData:"+ typeof allData);
+  const materialNames = allData.map(function (data){
+     return data.details.get("Material Name");
+  });
+  res.json(materialNames);
 });
 
 router.post("/addNew", async function(req, res){
