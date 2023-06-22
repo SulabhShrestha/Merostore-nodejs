@@ -2,87 +2,120 @@ const express = require("express");
 const router = express.Router();
 
 const InStockModel = require("../models/instock_model");
-const UserModel = require("../models/user_model");
-const mongoose = require("../db_connection");
 
 // returns all stocks
 router.get("/", async function (req, res) {
-
   const allData = await InStockModel.find({});
   res.json(allData);
 });
 
-// returns all materialNames of specific store
+/**
+ * Retrieves all material names of specific store
+ *
+ * Endpoint: GET /instock/materialNames/{storeName}
+ *
+ * @param {string} storeName - The name of the store.
+ *
+ */
 router.get("/materialNames/:storeName", async function (req, res) {
-  console.log("Storename" + req.params.storeName);
-  const allData = await InStockModel.find({storeName: req.params.storeName.toLowerCase()});
+  const allData = await InStockModel.find({
+    storeName: req.params.storeName.toLowerCase(),
+  });
 
-  console.log("AllData:"+ typeof allData);
-  const materialNames = allData.map(function (data){
-     return data.details.get("Material Name");
+  if (allData.length == 0) {
+    res.status(404).send("No material found");
+    return;
+  }
+
+  const materialNames = allData.map(function (data) {
+    return data.details.get("Material Name");
   });
   res.json(materialNames);
 });
 
-router.post("/addNew", async function(req, res){
+
+/**
+ * Add new material to a specific store
+ *
+ * Endpoint: POST /instock/add
+ *
+ * @body {"Transaction Type", "Store Name", "details"} - Json data of new material
+ */
+router.post("/add", async function (req, res) {
   console.log(req.body);
 
-  let isSaved = false;
-  const transactionType = req.body["Transaction Type"].toLowerCase();
-  const storeName = req.body["Store Name"].toLowerCase();
+  const transactionType = req.body["Transaction Type"];
+  const storeName = req.body["Store Name"];
+  const details = req.body["details"];
+
+  // checking if it is empty
+  if (
+    transactionType == undefined ||
+    storeName == undefined ||
+    details == undefined
+  ) {
+    res.status(400).send("Missing required fields.");
+    return;
+  }
 
   const instock = new InStockModel({
-    transactionType,
-    storeName,
-    details: req.body.details,
+    transactionType: transactionType.toLowerCase(),
+    storeName: storeName.toLowerCase(),
+    details,
   });
 
-  // trying to save
   try {
-    await instock.save();
+    const saveRes = await instock.save();
 
-    // adding stock id to the respective user 
-    isSaved = await addStockID(instock._id);
-    
-    res.json({
-      isSaved: isSaved,
-    });
-
-  } catch (error) {
-    console.error(error);
+    if (saveRes) {
+      res.status(201).send("Saved successfully");
+    } else {
+      res.status(500).send("Error occurred while saving the store.");
+    }
+  } catch (err) {
     res.status(500).send("Error occurred while saving the store.");
   }
 });
 
+/**
+ * Retrieves specific material data of a specific store
+ *
+ * Endpoint: GET /instock/materialDetails/{storeName}/{materialName}
+ *
+ * @param {string} storeName - The name of the store.
+ * @param {string} materialName - The name of the material.
+ * @returns {json} - Json data of matched material
+ * @returns {string} - If no material is found
+ *
+ */
 
-// Returns material details of specific store
+router.get(
+  "/materialDetails/:storeName/:materialName",
+  async function (req, res) {
+    const storeName = req.params.storeName.toLowerCase();
+    const materialName = req.params.materialName.toLowerCase();
 
-router.get("/materialDetails/:storeName/:materialName", async function (req, res) {
-  const storeName = req.params.storeName.toLowerCase();
-  const materialName = req.params.materialName.toLowerCase();
+    // checking if it is empty
+    if (
+      storeName == undefined ||
+      materialName == undefined
+    ) {
+      res.status(400).send("Missing required fields.");
+      return;
+    }
 
-  const materialDetails = await InStockModel.findOne({ 'details.Material Name': materialName, storeName });
+    // There should be only one material with same name in a store
+    const materialDetails = await InStockModel.findOne({
+      "details.Material Name": materialName,
+      storeName,
+    });
 
-  if(materialDetails){
-    return res.json(materialDetails);
+    if (materialDetails) {
+      res.json(materialDetails);
+    } else {
+      res.status(404).send("No material found");
+    }
   }
-  else{
-    throw new Error("No material found");
-  }
-});
-
-
-async function addStockID(stockID) {
-  try {
-    await UserModel.updateOne(
-      { name: "Sulabh Shrestha" }, // this is temporary
-      { $push: { stocks: stockID } }
-    );
-    return true;
-  } catch (error) {
-    console.error(error);
-    return false;
-  }
-}
+);
 
 module.exports = router;

@@ -3,9 +3,6 @@ const express = require("express");
 const router = express.Router();
 
 const StoreModel = require("../models/store_model");
-const UserModel = require("../models/user_model");
-const mongoose = require("../db_connection");
-
 
 // return all store names
 router.get("/", async function (req, res) {
@@ -13,45 +10,49 @@ router.get("/", async function (req, res) {
   res.json(allData);
 });
 
-router.post("/addNew", async function (req, res) {
-  console.log(req.body);
 
-  let isSaved = false;
+/**
+ * Add new store
+ *
+ * Endpoint: POST /store/add
+ *
+ * @body {"storename", "quantityTypes", "transactionTypes"} - Json data of new store
+ */
+
+router.post("/add", async function (req, res) {
+  const storeName = req.body.storeName;
+  const quantityTypes = req.body.quantityTypes;
+  const transactionTypes = req.body.transactionTypes;
+
+  // checking if it is empty
+  if (
+    quantityTypes == undefined ||
+    storeName == undefined ||
+    transactionTypes == undefined
+  ) {
+    res
+      .status(400)
+      .send("Missing required fields.");
+    return;
+  }
 
   const newStore = new StoreModel({
-    storeName: req.body.storeName,
-    quantityTypes: req.body.quantityTypes,
-    transactionTypes: req.body.transactionTypes
+    storeName: storeName.toLowerCase(),
+    quantityTypes,
+    transactionTypes,
   });
 
   try {
-    let addedStore = await newStore.save(); // saved store is returned
+    const saveRes = await newStore.save();
 
-    isSaved = await addStoreID(newStore._id);
-    
-    res.json({
-      isSaved: isSaved,
-      newStore: addedStore,
-    });
-  } catch (error) {
-    console.error(error);
-    res.status(500).send("Error occurred while saving the store.");
+    if (saveRes) {
+      res.status(201).send("Saved successfully");
+    } else {
+      res.status(500).send("Error occurred while saving the store.");
+    }
+  } catch (err) {
+    res.status(500).send(`Error occurred while saving the store.`);
   }
 });
-
-async function addStoreID(storeId){
-
-  try {
-    await UserModel.updateOne(
-      { name: "Sulabh Shrestha" }, // this is temporary
-      { $push: { storeNames: storeId } }
-    );
-    return true;
-  } catch (error) {
-    console.error(error);
-    return false;
-  }
-
-}
 
 module.exports = router;

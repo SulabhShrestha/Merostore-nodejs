@@ -2,8 +2,6 @@ const express = require("express");
 const router = express.Router();
 
 const UserModel = require("../models/user_model");
-const mongoose = require("../db_connection");
-
 
 router.post("/create", function (req, res) {
   console.log("Inside user");

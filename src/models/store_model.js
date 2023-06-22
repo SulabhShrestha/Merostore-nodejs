@@ -10,14 +10,12 @@ const storeSchema = new mongoose.Schema({
   transactionTypes: {
     type: [String],
     required: true,
-    default: undefined,
   },
 
   // stock details
   quantityTypes: {
     type: [String],
     required: true,
-    default: undefined,
   },
 });
 

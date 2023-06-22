@@ -9,29 +9,48 @@ router.get("/", async function (req, res) {
   res.json(allData);
 });
 
-// Add new sales
-router.post("/addNew", async function (req, res) {
+/**
+ * Add new sales transaction
+ *
+ * Endpoint: POST /sales/add
+ *
+ * @body {"Transaction Type", "Store Name", "details"} - Json data of new material
+ */
+router.post("/add", async function (req, res) {
   console.log(req.body);
 
-  const transactionType = req.body["Transaction Type"].toLowerCase();
-  const storeName = req.body["Store Name"].toLowerCase();
+  const transactionType = req.body["Transaction Type"];
+  const storeName = req.body["Store Name"];
+  const details = req.body["details"];
+
+  // checking if it is empty
+  if (
+    transactionType == undefined ||
+    storeName == undefined ||
+    details == undefined
+  ) {
+    res
+      .status(400)
+      .send("Missing required fields.");
+    return;
+  }
 
   const sales = new SalesModel({
-    transactionType,
-    storeName,
-    details: req.body.details,
+    transactionType: transactionType.toLowerCase(),
+    storeName: storeName.toLowerCase(),
+    details,
   });
 
-  // trying to save
   try {
-    await sales.save();
+    const saveRes = await sales.save();
 
-    res.json({
-      isSaved: true,
-    });
-  } catch (error) {
-    console.error(error);
-    res.status(500).send("Error occurred while saving the store.");
+    if (saveRes) {
+      res.status(201).send("Saved successfully");
+    } else {
+      res.status(500).send("Error occurred while saving the store.");
+    }
+  } catch (err) {
+    res.status(500).send(`Error occurred while saving the store.`);
   }
 });
 
