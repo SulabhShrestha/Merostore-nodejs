@@ -15,7 +15,7 @@ router.get("/", async function (req, res) {
 // returns all materialNames of specific store
 router.get("/materialNames/:storeName", async function (req, res) {
   console.log("Storename" + req.params.storeName);
-  const allData = await InStockModel.find({storeName: req.params.storeName});
+  const allData = await InStockModel.find({storeName: req.params.storeName.toLowerCase()});
 
   console.log("AllData:"+ typeof allData);
   const materialNames = allData.map(function (data){
@@ -51,6 +51,23 @@ router.post("/addNew", async function(req, res){
   } catch (error) {
     console.error(error);
     res.status(500).send("Error occurred while saving the store.");
+  }
+});
+
+
+// Returns material details of specific store
+
+router.get("/materialDetails/:storeName/:materialName", async function (req, res) {
+  const storeName = req.params.storeName.toLowerCase();
+  const materialName = req.params.materialName.toLowerCase();
+
+  const materialDetails = await InStockModel.findOne({ 'details.Material Name': materialName, storeName });
+
+  if(materialDetails){
+    return res.json(materialDetails);
+  }
+  else{
+    throw new Error("No material found");
   }
 });
 
