@@ -4,6 +4,18 @@ const router = express.Router();
 const InStockModel = require("../models/instock_model");
 
 /**
+ * Retrieves all stocks including all stores
+ *
+ * Endpoint: GET /instock/{storeName}
+
+ */
+router.get("/", async function (req, res) {
+
+  const allData = await InStockModel.find({});
+  res.json(allData);
+});
+
+/**
  * Retrieves all stocks based on storename
  *
  * Endpoint: GET /instock/{storeName}
@@ -36,7 +48,12 @@ router.get("/materialNames/:storeName", async function (req, res) {
     return;
   }
 
+  console.log("All data: ", typeof allData);
+
+
   const materialNames = allData.map(function (data) {
+
+    console.log("Data: ",data.details);
     return data.details.get("Material Name");
   });
   res.json(materialNames);

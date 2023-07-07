@@ -4,6 +4,18 @@ const router = express.Router();
 const SalesModel = require("../models/sales_model");
 
 /**
+ * Retrieves all stocks including any storename
+ *
+ * Endpoint: GET /sales
+ *
+ */
+router.get("/", async function (req, res) {
+
+  const allData = await SalesModel.find();
+  res.json(allData);
+});
+
+/**
  * Retrieves all stocks based on storename
  *
  * Endpoint: GET /sales/{storeName}
