@@ -12,7 +12,7 @@ const SalesSchema = new mongoose.Schema({
   // stock details
   details: {
     type: Map,
-    of: String,
+    of: mongoose.Schema.Types.Mixed,
     required: false,
   },
 });

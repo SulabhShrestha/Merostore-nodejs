@@ -68,9 +68,8 @@ router.get("/materialNames/:storeName", async function (req, res) {
  * @body {"Transaction Type", "Store Name", "details"} - Json data of new material
  */
 router.post("/add", async function (req, res) {
-
-  const transactionType = req.body["Transaction Type"];
-  const storeName = req.body["Store Name"];
+  const transactionType = req.body["transactionType"];
+  const storeName = req.body["storeName"];
   const details = req.body["details"];
 
   // checking if it is empty
@@ -81,6 +80,21 @@ router.post("/add", async function (req, res) {
   ) {
     res.status(400).send("Missing required fields.");
     return;
+  }
+
+  // checking if material is previously added,
+  // if it exists, returning duplicate data error
+  const previousData = await InStockModel.findOne({
+    storeName,
+    "details.Material Name": details["Material Name"],
+  });
+
+  // returning error
+  if(previousData){
+
+    res.status(400).send("Duplicate data.");
+    return;
+
   }
 
   const instock = new InStockModel({

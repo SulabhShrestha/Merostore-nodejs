@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 
 const SalesModel = require("../models/sales_model");
+const Sales = require("../models/sales_model");
 
 /**
  * Retrieves all stocks including any storename
@@ -51,11 +52,17 @@ router.post("/add", async function (req, res) {
     storeName == undefined ||
     details == undefined
   ) {
-    res
-      .status(400)
-      .send("Missing required fields.");
+    res.status(400).send("Missing required fields.");
     return;
   }
+
+  // checking if material is previously added,
+  // if it exists, values is updated
+
+  const ifExists = await SalesModel.findOne({
+    storeName,
+    "details.Material Name": details["Material Name"],
+  });
 
   const sales = new SalesModel({
     transactionType: transactionType.toLowerCase(),

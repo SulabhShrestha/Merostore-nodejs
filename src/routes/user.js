@@ -1,26 +1,8 @@
 const express = require("express");
+const passport = require("passport");
 const router = express.Router();
 
-const UserModel = require("../models/user_model");
 
-router.post("/create", function (req, res) {
-  console.log("Inside user");
-
-  let isSaved = false;
-  
-
-  const user = new UserModel({
-    name: "Sulabh Shrestha",
-  });
-
-  user
-    .save()
-    .then(() => (isSaved = true))
-    .catch(() => (isSaved = false));
-
-  res.json({
-    isSaved: isSaved,
-  });
-});
+router.get("/aa/google", passport.authenticate("google", { scope: ["profile", "email"] , failureRedirect : '/login'}));
 
 module.exports = router;
