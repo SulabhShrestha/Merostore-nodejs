@@ -17,7 +17,7 @@ router.get("/", async function (req, res) {
 });
 
 /**
- * Retrieves all stocks based on storename
+ * Retrieves all sales based on storename
  *
  * Endpoint: GET /sales/{storeName}
  *
