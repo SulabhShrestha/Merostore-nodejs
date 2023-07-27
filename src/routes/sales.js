@@ -2,7 +2,6 @@ const express = require("express");
 const router = express.Router();
 
 const SalesModel = require("../models/sales_model");
-const Sales = require("../models/sales_model");
 
 /**
  * Retrieves all stocks including any storename
@@ -17,19 +16,36 @@ router.get("/", async function (req, res) {
 });
 
 /**
- * Retrieves all sales based on storename
+ * Retrieves all sales based on storename of current date only
+ * Used for populating sales page
  *
- * Endpoint: GET /sales/{storeName}
+ * Endpoint: GET /sales/{currentDate}/{storeName}
  *
  * @param {string} storeName - The name of the store.
+ * @param {string} currentData - Today's date, "2023-07-27T00:00:00.000+05:30"
+
  *
  */
-router.get("/:storeName", async function (req, res) {
-
+router.get("/:currentDate/:storeName", async function (req, res) {
   const storeName = req.params.storeName.toLowerCase();
+  const currentDateParam = req.params.currentDate;
 
-  const allData = await SalesModel.find({storeName});
-  res.json(allData);
+  // Convert the currentDateParam to a Date object
+  const currentDate = new Date(currentDateParam);
+
+  try {
+    // Use the currentDate directly in the MongoDB query
+    const allData = await SalesModel.find({
+      storeName: storeName,
+      createdAt: {
+        $gte: currentDate,
+        $lt: new Date(currentDate.getTime() + 24 * 60 * 60 * 1000),
+      },
+    });
+    res.json(allData);
+  } catch (error) {
+    res.status(500).json({ error: "Internal server error" });
+  }
 });
 
 /**
