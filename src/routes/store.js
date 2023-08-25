@@ -78,4 +78,32 @@ router.delete("/:id", async function (req, res) {
   }
 });
 
+/**
+ * Update store
+ *
+ * Endpoint: PATCH /store/:id
+ */
+router.patch("/:id", async function (req, res) {
+  const id = req.params.id;
+  const storeName = req.body.storeName;
+  const quantityTypes = req.body.quantityTypes;
+  const transactionTypes = req.body.transactionTypes;
+
+  try {
+    const updateRes = await StoreModel.findByIdAndUpdate(id, {
+      storeName,
+      quantityTypes,
+      transactionTypes,
+    });
+
+    if (updateRes) {
+      res.status(201).send("Updated successfully");
+    } else {
+      res.status(500).send("Error occurred while updating the store.");
+    }
+  } catch (err) {
+    res.status(500).send(`Error occurred while updating the store. ${err}`);
+  }
+});
+
 module.exports = router;
