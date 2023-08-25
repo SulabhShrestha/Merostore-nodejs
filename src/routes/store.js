@@ -17,7 +17,6 @@ router.get("/", async function (req, res) {
  *
  * @body {"storename", "quantityTypes", "transactionTypes"} - Json data of new store
  */
-
 router.post("/add", async function (req, res) {
   const storeName = req.body.storeName;
   const quantityTypes = req.body.quantityTypes;
@@ -47,6 +46,35 @@ router.post("/add", async function (req, res) {
     }
   } catch (err) {
     res.status(500).send(`Error occurred while saving the store. ${err}`);
+  }
+});
+
+/**
+ * Delete added store
+ *
+ * Endpoint: DELETE /store/:id
+ */
+
+router.delete("/:id", async function (req, res) {
+  const id = req.params.id;
+
+  console.log(req, id);
+
+  if (!id) {
+    res.status(400).send("Missing required fields.");
+    return;
+  }
+
+  try {
+    const deleteRes = await StoreModel.findByIdAndDelete(id);
+
+    if (deleteRes) {
+      res.status(201).send("Deleted successfully");
+    } else {
+      res.status(500).send("Error occurred while deleting the store.");
+    }
+  } catch (err) {
+    res.status(500).send(`Error occurred while deleting the store. ${err}`);
   }
 });
 
