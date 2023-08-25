@@ -61,7 +61,6 @@ router.post("/add", async function (req, res) {
  *
  * Endpoint: DELETE /store/:id
  */
-
 router.delete("/:id", async function (req, res) {
   const id = req.params.id;
 
