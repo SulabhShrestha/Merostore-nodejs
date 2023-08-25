@@ -7,17 +7,11 @@ const StoreModel = require("../models/store_model");
  * returns all store names
  *
  * Endpoint: GET /store
- * authorization: user id
  *
  */
 router.get("/", async function (req, res) {
   const uid = req.headers.authorization;
 
-  // if no header is passed
-  if (!uid) {
-    res.status(401).send("Unauthorized");
-    return;
-  }
   const allData = await StoreModel.find({ uid });
   res.json(allData);
 });
@@ -35,12 +29,6 @@ router.post("/add", async function (req, res) {
   const transactionTypes = req.body.transactionTypes;
 
   const uid = req.headers.authorization;
-
-  // if no header is passed
-  if (!uid) {
-    res.status(401).send("Unauthorized");
-    return;
-  }
 
   // checking if it is empty
   if (!uid || !quantityTypes || !storeName || !transactionTypes) {
@@ -76,13 +64,6 @@ router.post("/add", async function (req, res) {
 
 router.delete("/:id", async function (req, res) {
   const id = req.params.id;
-  const uid = req.headers.authorization;
-
-  // if no header is passed
-  if (!uid) {
-    res.status(401).send("Unauthorized");
-    return;
-  }
 
   if (!id) {
     res.status(400).send("Missing required fields.");
@@ -112,14 +93,6 @@ router.patch("/:id", async function (req, res) {
   const storeName = req.body.storeName;
   const quantityTypes = req.body.quantityTypes;
   const transactionTypes = req.body.transactionTypes;
-
-  const uid = req.headers.authorization;
-
-  // if no header is passed
-  if (!uid) {
-    res.status(401).send("Unauthorized");
-    return;
-  }
 
   try {
     const updateRes = await StoreModel.findByIdAndUpdate(id, {
