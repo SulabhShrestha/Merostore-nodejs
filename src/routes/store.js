@@ -10,7 +10,6 @@ router.get("/", async function (req, res) {
   res.json(allData);
 });
 
-
 /**
  * Add new store
  *
@@ -23,16 +22,11 @@ router.post("/add", async function (req, res) {
   const storeName = req.body.storeName;
   const quantityTypes = req.body.quantityTypes;
   const transactionTypes = req.body.transactionTypes;
+  const uid = req.body.uid;
 
   // checking if it is empty
-  if (
-    quantityTypes == undefined ||
-    storeName == undefined ||
-    transactionTypes == undefined
-  ) {
-    res
-      .status(400)
-      .send("Missing required fields.");
+  if (!uid || !quantityTypes || !storeName || !transactionTypes) {
+    res.status(400).send("Missing required fields.");
     return;
   }
 
@@ -40,6 +34,7 @@ router.post("/add", async function (req, res) {
     storeName: storeName.toLowerCase(),
     quantityTypes,
     transactionTypes,
+    uid,
   });
 
   try {
@@ -51,7 +46,7 @@ router.post("/add", async function (req, res) {
       res.status(500).send("Error occurred while saving the store.");
     }
   } catch (err) {
-    res.status(500).send(`Error occurred while saving the store.`);
+    res.status(500).send(`Error occurred while saving the store. ${err}`);
   }
 });
 

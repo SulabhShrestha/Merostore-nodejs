@@ -2,12 +2,12 @@ const mongoose = require("mongoose");
 
 // connecting to mongodb
 
-const connectDB = function() {
+const connectDB = function () {
+  console.log(process.env.MongoDbURL);
   mongoose
-    .connect("mongodb://127.0.0.1:27017/MeroStore")
+    .connect(process.env.MongoDbURL)
     .then(() => console.log("Connected successfully."))
     .catch((e) => console.log("Error occurred" + e));
-}
-
+};
 
 module.exports = connectDB;
