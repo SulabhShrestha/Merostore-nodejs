@@ -5,6 +5,14 @@ const authChecker = require("../middleware/authChecker");
 const router = express.Router();
 
 /**
+ * returns all user
+ */
+router.get("/", async function (req, res) {
+  const allData = await UserModel.find();
+  res.json(allData);
+});
+
+/**
  * @api {post} /user/create Create a new user
  * stores: [mongoose.Schema.Types.ObjectId],
  *
