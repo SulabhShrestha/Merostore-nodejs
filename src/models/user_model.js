@@ -7,6 +7,7 @@ const UserSchema = new mongoose.Schema(
       required: [true, "Name is required"],
     },
     profileUrl: String,
+
     userId: {
       type: String,
       required: [true, "Firebase UID is required"],

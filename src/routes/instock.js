@@ -10,7 +10,6 @@ const InStockModel = require("../models/instock_model");
 
  */
 router.get("/", async function (req, res) {
-
   const allData = await InStockModel.find({});
   res.json(allData);
 });
@@ -21,12 +20,11 @@ router.get("/", async function (req, res) {
  * Endpoint: GET /instock/{storeName}
  *
  * @param {string} storeName - The name of the store.
- *
  */
 router.get("/:storeName", async function (req, res) {
   const storeName = req.params.storeName.toLowerCase();
 
-  const allData = await InStockModel.find({storeName});
+  const allData = await InStockModel.find({ storeName });
   res.json(allData);
 });
 
@@ -50,15 +48,12 @@ router.get("/materialNames/:storeName", async function (req, res) {
 
   console.log("All data: ", typeof allData);
 
-
   const materialNames = allData.map(function (data) {
-
-    console.log("Data: ",data.details);
+    console.log("Data: ", data.details);
     return data.details.get("Material Name");
   });
   res.json(materialNames);
 });
-
 
 /**
  * Add new material to a specific store
@@ -90,11 +85,9 @@ router.post("/add", async function (req, res) {
   });
 
   // returning error
-  if(previousData){
-
+  if (previousData) {
     res.status(400).send("Duplicate data.");
     return;
-
   }
 
   const instock = new InStockModel({
@@ -135,10 +128,7 @@ router.get(
     const materialName = req.params.materialName.toLowerCase();
 
     // checking if it is empty
-    if (
-      storeName == undefined ||
-      materialName == undefined
-    ) {
+    if (storeName == undefined || materialName == undefined) {
       res.status(400).send("Missing required fields.");
       return;
     }
