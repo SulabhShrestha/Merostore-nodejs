@@ -3,15 +3,18 @@ const UserModel = require(__dirname + "/../models/user_model.js");
 
 const router = express.Router();
 
-router.post("/add", async function (req, res){
-  const { email, name, profileUrl, userId } = req.body;
+/**
+ * @api {post} /user/create Create a new user
+ * stores: [mongoose.Schema.Types.ObjectId],
+ *
+ */
+router.post("/create", async function (req, res) {
+  const { email, name, profileUrl, userId, stores } = req.body;
 
   // First checking if it is previously added to db
   const data = await UserModel.findOne({ userId: userId });
 
-  console.log(`data: ${data}`);
-
-  if(data){
+  if (data) {
     res.status(400).send("User already exists.");
     return;
   }
@@ -20,19 +23,20 @@ router.post("/add", async function (req, res){
     email,
     name,
     profileUrl,
-    userId
+    userId,
+    stores,
   });
 
   try {
     const saveRes = await newUser.save();
 
     if (saveRes) {
-      res.status(201).send("Saved successfully");
+      res.status(201).send("Create successfully");
     } else {
       res.status(500).send("Error occurred while saving the store.");
     }
   } catch (err) {
-    res.status(500).send(`Error occurred while saving the store.`);
+    res.status(500).send(`Error occurred while saving the store. ${err}`);
   }
 });
 

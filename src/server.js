@@ -14,10 +14,11 @@ const connectDB = require(__dirname + "/db_connection.js");
 connectDB();
 
 app.use(express.json());
+app.use("/user", user); // no auth checking when creating user
 app.use(authChecker);
 app.use("/instock", instock);
 app.use("/store", store);
-app.use("/user", user);
+
 app.use("/sales", sales);
 
 app.listen(process.env.PORT, function () {
