@@ -18,10 +18,10 @@ router.get("/", async function (req, res) {
  *
  */
 router.post("/create", async function (req, res) {
-  const { email, name, profileUrl, userId, stores } = req.body;
+  const { email, name, profileUrl, uid, stores } = req.body;
 
   // First checking if it is previously added to db
-  const data = await UserModel.findOne({ userId: userId });
+  const data = await UserModel.findOne({ uid });
 
   if (data) {
     res.status(400).send("User already exists.");
@@ -32,7 +32,7 @@ router.post("/create", async function (req, res) {
     email,
     name,
     profileUrl,
-    userId,
+    uid,
     stores,
   });
 
@@ -57,7 +57,7 @@ router.patch("/update", authChecker, async function (req, res) {
 
   try {
     const updateRes = await UserModel.findOneAndUpdate(
-      { userId: req.headers.authorization },
+      { uid: req.headers.authorization },
       {
         email,
         name,
