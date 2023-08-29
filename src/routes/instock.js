@@ -103,12 +103,13 @@ router.post("/add", async function (req, res) {
     }
   );
 
-  // if something in previousData means we had added current data to previous data
+  // if something in [previousData] means we had added current data to previous data
   if (previousData) {
-    res.status(200).send("Data updated.");
+    res.status(200).send("Updated successfully.");
     return;
   }
 
+  // else it's a new data, so creating new data
   const instock = new InStockModel({
     transactionType: transactionType.toLowerCase(),
     storeId: storeExists._id,
