@@ -27,8 +27,6 @@ router.get("/:storeName", async function (req, res) {
   // retreving store
   const store = await StoreModel.findOne({ storeName });
 
-  console.log(store);
-
   const allData = await InStockModel.find({
     storeId: store._id,
     uid: req.headers.authorization,
@@ -45,8 +43,12 @@ router.get("/:storeName", async function (req, res) {
  *
  */
 router.get("/materialNames/:storeName", async function (req, res) {
+  const storeName = req.params.storeName.toLowerCase();
+  // retreving store
+  const store = await StoreModel.findOne({ storeName });
+
   const allData = await InStockModel.find({
-    storeName: req.params.storeName.toLowerCase(),
+    storeId: store._id,
   });
 
   if (allData.length == 0) {
@@ -54,11 +56,8 @@ router.get("/materialNames/:storeName", async function (req, res) {
     return;
   }
 
-  console.log("All data: ", typeof allData);
-
   const materialNames = allData.map(function (data) {
-    console.log("Data: ", data.details);
-    return data.details.get("Material Name");
+    return data.details.get("materialName");
   });
   res.json(materialNames);
 });
@@ -161,10 +160,13 @@ router.get(
       return;
     }
 
+    // retreving store
+    const store = await StoreModel.findOne({ storeName });
+
     // There should be only one material with same name in a store
     const materialDetails = await InStockModel.findOne({
-      "details.Material Name": materialName,
-      storeName,
+      "details.materialName": materialName,
+      storeId: store._id,
     });
 
     if (materialDetails) {
