@@ -1,20 +1,26 @@
 const mongoose = require("mongoose");
+const Store = require("./store_model");
 
 const InStockSchema = new mongoose.Schema(
   {
-    //   uid: String,
-
-    storeName: String,
+    uid: {
+      type: String,
+      required: true,
+    }, // user id
+    storeName: {
+      type: Store,
+      required: true,
+    },
     transactionType: {
       type: String,
-      enum: ["cash", "credit", "prepaid", "return"],
+      required: true,
     },
 
     // stock details
     details: {
       type: Map,
       of: String,
-      required: false,
+      required: true,
     },
   },
   { timestamps: true }
