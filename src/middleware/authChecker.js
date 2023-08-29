@@ -2,7 +2,6 @@ const UserModel = require("../models/user_model");
 
 const authChecker = async function (req, res, next) {
   if (!req.headers.authorization) {
-    //TODO: later valid uid should be checked
     res.status(401).send("Unauthorized");
     return;
   }

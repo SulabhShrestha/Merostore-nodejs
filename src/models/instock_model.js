@@ -7,8 +7,9 @@ const InStockSchema = new mongoose.Schema(
       type: String,
       required: true,
     }, // user id
-    storeName: {
-      type: Store,
+    storeId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Store",
       required: true,
     },
     transactionType: {
@@ -19,7 +20,6 @@ const InStockSchema = new mongoose.Schema(
     // stock details
     details: {
       type: Map,
-      of: String,
       required: true,
     },
   },

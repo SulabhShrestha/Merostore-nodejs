@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 
 const InStockModel = require("../models/instock_model");
+const StoreModel = require("../models/store_model");
 
 /**
  * Retrieves all stocks including all stores
@@ -68,32 +69,51 @@ router.post("/add", async function (req, res) {
   const details = req.body["details"];
 
   // checking if it is empty
-  if (
-    transactionType == undefined ||
-    storeName == undefined ||
-    details == undefined
-  ) {
+  if (!transactionType || !storeName || !details) {
     res.status(400).send("Missing required fields.");
+    return;
+  }
+
+  // checking if store exists
+  const storeExists = await StoreModel.findOne({ storeName });
+  if (!storeExists) {
+    res.status(400).send("Store doesn't exists.");
     return;
   }
 
   // checking if material is previously added,
   // if it exists, returning duplicate data error
-  const previousData = await InStockModel.findOne({
-    storeName,
-    "details.Material Name": details["Material Name"],
-  });
+  const previousData = await InStockModel.findOneAndUpdate(
+    {
+      uid: req.headers.authorization,
+      storeId: storeExists._id,
+      "details.materialName": details["materialName"],
+      "details.broughtQuantityType": details["broughtQuantityType"],
+    },
+    {
+      $set: {
+        transactionType: transactionType.toLowerCase(),
+        storeId: storeExists._id,
+        uid: req.headers.authorization,
+      },
+      $inc: {
+        "details.totalPrice": details["totalPrice"],
+        "details.broughtQuantity": details["broughtQuantity"],
+      },
+    }
+  );
 
-  // returning error
+  // if something in previousData means we had added current data to previous data
   if (previousData) {
-    res.status(400).send("Duplicate data.");
+    res.status(200).send("Data updated.");
     return;
   }
 
   const instock = new InStockModel({
     transactionType: transactionType.toLowerCase(),
-    storeName: storeName.toLowerCase(),
+    storeId: storeExists._id,
     details,
+    uid: req.headers.authorization,
   });
 
   try {
@@ -105,7 +125,7 @@ router.post("/add", async function (req, res) {
       res.status(500).send("Error occurred while saving the store.");
     }
   } catch (err) {
-    res.status(500).send("Error occurred while saving the store.");
+    res.status(500).send("Error occurred while saving the store. " + err);
   }
 });
 
