@@ -24,8 +24,13 @@ router.get("/", async function (req, res) {
 router.get("/:storeName", async function (req, res) {
   const storeName = req.params.storeName.toLowerCase();
 
+  // retreving store
+  const store = await StoreModel.findOne({ storeName });
+
+  console.log(store);
+
   const allData = await InStockModel.find({
-    storeName,
+    storeId: store._id,
     uid: req.headers.authorization,
   });
   res.json(allData);
