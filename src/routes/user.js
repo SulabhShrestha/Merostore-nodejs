@@ -50,7 +50,7 @@ router.post("/create", async function (req, res) {
 });
 
 // adding store to the user
-router.patch("/update", authChecker, async function (req, res) {
+router.patch("/update", async function (req, res) {
   const { email, name, profileUrl, stores } = req.body;
 
   console.log("req.headers.authorization", req.headers.authorization);

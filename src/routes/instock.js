@@ -148,6 +148,7 @@ router.post("/add", async function (req, res) {
  *
  */
 
+//TODO: needed to look this later
 router.get(
   "/materialDetails/:storeName/:materialName",
   async function (req, res) {
@@ -155,7 +156,7 @@ router.get(
     const materialName = req.params.materialName.toLowerCase();
 
     // checking if it is empty
-    if (storeName == undefined || materialName == undefined) {
+    if (!storeName || !materialName) {
       res.status(400).send("Missing required fields.");
       return;
     }

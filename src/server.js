@@ -15,7 +15,7 @@ connectDB();
 
 app.use(express.json());
 app.use("/user", user); // no auth checking when creating user
-app.use(authChecker);
+// app.use(authChecker);
 app.use("/instock", instock);
 app.use("/store", store);
 
