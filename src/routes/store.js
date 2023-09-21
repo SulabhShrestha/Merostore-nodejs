@@ -45,9 +45,10 @@ router.post("/add", async function (req, res) {
 
   try {
     const saveRes = await newStore.save();
+    console.log(saveRes);
 
     if (saveRes) {
-      res.status(201).send("Saved successfully");
+      res.status(201).send(saveRes);
     } else {
       res.status(500).send("Error occurred while saving the store.");
     }
