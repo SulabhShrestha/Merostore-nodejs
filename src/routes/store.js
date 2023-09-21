@@ -63,18 +63,34 @@ router.post("/add", async function (req, res) {
  * Endpoint: DELETE /store/:id
  */
 router.delete("/:id", async function (req, res) {
-  const id = req.params.id;
+  const storeId = req.params.id;
+  const userId = req.headers.authorization;
 
-  if (!id) {
+  if (!storeId || !userId) {
     res.status(400).send("Missing required fields.");
     return;
   }
 
   try {
-    const deleteRes = await StoreModel.findByIdAndDelete(id);
+    const store = await StoreModel.findById(storeId);
+
+    if (!store) {
+      res.status(404).send("Store not found.");
+      return;
+    }
+
+    // Check if the userId in the request headers matches the userId associated with the store
+    if (store.uid.toString() !== userId) {
+      res
+        .status(403)
+        .send("Unauthorized. You do not have permission to delete this store.");
+      return;
+    }
+
+    const deleteRes = await StoreModel.findByIdAndDelete(storeId);
 
     if (deleteRes) {
-      res.status(201).send("Deleted successfully");
+      res.status(200).send("Deleted successfully");
     } else {
       res.status(500).send("Error occurred while deleting the store.");
     }
