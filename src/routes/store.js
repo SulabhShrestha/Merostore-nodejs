@@ -118,7 +118,7 @@ router.patch("/:id", async function (req, res) {
     });
 
     if (updateRes) {
-      res.status(201).send("Updated successfully");
+      res.status(200).send("Updated successfully");
     } else {
       res.status(500).send("Error occurred while updating the store.");
     }
