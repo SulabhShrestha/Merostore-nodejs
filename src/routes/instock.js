@@ -32,7 +32,7 @@ router.get("/:storeName", async function (req, res) {
   const allData = await InStockModel.find({
     storeId: store._id,
     uid: req.headers.authorization,
-  });
+  }).populate("storeId");
   res.json(allData);
 });
 
@@ -51,7 +51,7 @@ router.get("/materialNames/:storeName", async function (req, res) {
 
   const allData = await InStockModel.find({
     storeId: store._id,
-  });
+  }).populate("storeId");
 
   if (allData.length == 0) {
     res.status(404).send("No material found");
@@ -109,7 +109,7 @@ router.post("/add", async function (req, res) {
         "details.broughtQuantity": details["broughtQuantity"],
       },
     }
-  );
+  ).populate("storeId");
 
   // if something in [previousData] means we had added current data to previous data
   if (previousData) {
@@ -123,7 +123,7 @@ router.post("/add", async function (req, res) {
     storeId: storeExists._id,
     details,
     uid: req.headers.authorization,
-  });
+  }).populate("storeId");
 
   try {
     const saveRes = await instock.save();
@@ -170,7 +170,7 @@ router.get(
     const materialDetails = await InStockModel.findOne({
       "details.materialName": materialName,
       storeId: store._id,
-    });
+    }).populate("storeId");
 
     if (materialDetails) {
       res.json(materialDetails);
