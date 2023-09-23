@@ -123,13 +123,17 @@ router.post("/add", async function (req, res) {
     storeId: storeExists._id,
     details,
     uid: req.headers.authorization,
-  }).populate("storeId");
+  });
 
   try {
     const saveRes = await instock.save();
 
     if (saveRes) {
-      res.status(201).send(saveRes);
+      const newlyAddeddStock = await InStockModel.findOne({
+        uid: saveRes.uid,
+      }).populate("storeId");
+
+      res.status(201).send(newlyAddeddStock);
     } else {
       res.status(500).send("Error occurred while saving the store.");
     }
