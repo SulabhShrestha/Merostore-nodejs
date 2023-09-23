@@ -129,7 +129,7 @@ router.post("/add", async function (req, res) {
     const saveRes = await instock.save();
 
     if (saveRes) {
-      res.status(201).send("Saved successfully");
+      res.status(201).send(saveRes);
     } else {
       res.status(500).send("Error occurred while saving the store.");
     }
