@@ -10,7 +10,9 @@ const StoreModel = require("../models/store_model");
  * Endpoint: GET /instock/{storeName}
  */
 router.get("/", async function (req, res) {
-  const allData = await InStockModel.find({ uid: req.headers.authorization });
+  const allData = await InStockModel.find({
+    uid: req.headers.authorization,
+  }).populate("storeId");
   res.json(allData);
 });
 
