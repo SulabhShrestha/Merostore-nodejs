@@ -113,7 +113,7 @@ router.post("/add", async function (req, res) {
 
   // if something in [previousData] means we had added current data to previous data
   if (previousData) {
-    res.status(200).send("Updated successfully.");
+    res.status(200).send(previousData);
     return;
   }
 
