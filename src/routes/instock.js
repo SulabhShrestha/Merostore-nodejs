@@ -97,6 +97,8 @@ router.post("/add", async function (req, res) {
       storeId: storeExists._id,
       "details.materialName": details["materialName"],
       "details.broughtQuantityType": details["broughtQuantityType"],
+      "details.creditorName": details["creditorName"],
+      "details.debtorName": details["debtorName"],
     },
     {
       $set: {
@@ -183,5 +185,24 @@ router.get(
     }
   }
 );
+
+// Deletes the stock
+router.delete("/:storeId/:stockId", async function (req, res) {
+  const storeId = req.params.storeId;
+  const stockId = req.params.stockId;
+  const userId = req.headers.authorization;
+
+  const deletedStock = await InStockModel.findOneAndDelete({
+    uid: userId,
+    storeId,
+    _id: stockId,
+  });
+
+  if (deletedStock) {
+    res.status(200).send("Deleted successfully");
+  } else {
+    res.status(404).send("No stock found");
+  }
+});
 
 module.exports = router;
