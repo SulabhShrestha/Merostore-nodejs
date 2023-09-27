@@ -133,6 +133,7 @@ router.post("/add", async function (req, res) {
     if (saveRes) {
       const newlyAddeddStock = await InStockModel.findOne({
         uid: saveRes.uid,
+        _id: instock._id,
       }).populate("storeId");
 
       res.status(201).send(newlyAddeddStock);
@@ -199,9 +200,9 @@ router.delete("/:storeId/:stockId", async function (req, res) {
   });
 
   if (deletedStock) {
-    res.status(200).send("Deleted successfully");
+    res.status(200).send("Deleted successfully.");
   } else {
-    res.status(404).send("No stock found");
+    res.status(404).send("Stock not found.");
   }
 });
 
