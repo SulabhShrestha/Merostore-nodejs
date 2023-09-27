@@ -220,6 +220,9 @@ router.patch("/:storeId/:stockId", async function (req, res) {
     },
     {
       $set: req.body,
+    },
+    {
+      new: true,
     }
   ).populate("storeId");
 
