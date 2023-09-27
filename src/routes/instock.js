@@ -221,10 +221,10 @@ router.patch("/:storeId/:stockId", async function (req, res) {
     {
       $set: req.body,
     }
-  );
+  ).populate("storeId");
 
   if (updated) {
-    res.status(200).send("Updated successfully.");
+    res.status(200).send(updated);
   } else {
     res.status(404).send("Stock not found.");
   }
