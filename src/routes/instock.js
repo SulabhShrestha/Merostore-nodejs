@@ -206,4 +206,28 @@ router.delete("/:storeId/:stockId", async function (req, res) {
   }
 });
 
+// updates the stock
+router.patch("/:storeId/:stockId", async function (req, res) {
+  const storeId = req.params.storeId;
+  const stockId = req.params.stockId;
+  const userId = req.headers.authorization;
+
+  const updated = await InStockModel.findOneAndUpdate(
+    {
+      uid: userId,
+      storeId,
+      _id: stockId,
+    },
+    {
+      $set: req.body,
+    }
+  );
+
+  if (updated) {
+    res.status(200).send("Updated successfully.");
+  } else {
+    res.status(404).send("Stock not found.");
+  }
+});
+
 module.exports = router;
