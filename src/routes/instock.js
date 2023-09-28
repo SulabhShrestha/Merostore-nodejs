@@ -89,12 +89,30 @@ router.post("/add", async function (req, res) {
     return;
   }
 
+  // increment or decrement based on transaction type
+  let incData = {};
+  if (
+    transactionType.toLowerCase() === "cash" ||
+    transactionType.toLowerCase() === "credit"
+  ) {
+    incData = {
+      "details.totalPrice": details["totalPrice"],
+      "details.broughtQuantity": details["broughtQuantity"],
+    };
+  } else if (transactionType.toLowerCase() === "prepaid") {
+    incData = {
+      "details.moneyGiven": details["moneyGiven"],
+      "details.forQuantity": details["forQuantity"],
+    };
+  }
+
   // checking if material is previously added,
   // if it exists, returning duplicate data error
   const previousData = await InStockModel.findOneAndUpdate(
     {
       uid: req.headers.authorization,
       storeId: storeExists._id,
+      transactionType: transactionType.toLowerCase(),
       "details.materialName": details["materialName"],
       "details.broughtQuantityType": details["broughtQuantityType"],
       "details.creditorName": details["creditorName"],
@@ -102,14 +120,12 @@ router.post("/add", async function (req, res) {
     },
     {
       $set: {
-        transactionType: transactionType.toLowerCase(),
-        storeId: storeExists._id,
-        uid: req.headers.authorization,
+        "details.description": details["description"],
       },
-      $inc: {
-        "details.totalPrice": details["totalPrice"],
-        "details.broughtQuantity": details["broughtQuantity"],
-      },
+      $inc: incData,
+    },
+    {
+      new: true,
     }
   ).populate("storeId");
 
