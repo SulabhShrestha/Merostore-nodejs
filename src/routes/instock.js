@@ -89,23 +89,6 @@ router.post("/add", async function (req, res) {
     return;
   }
 
-  // increment or decrement based on transaction type
-  let incData = {};
-  if (
-    transactionType.toLowerCase() === "cash" ||
-    transactionType.toLowerCase() === "credit"
-  ) {
-    incData = {
-      "details.totalPrice": details["totalPrice"],
-      "details.broughtQuantity": details["broughtQuantity"],
-    };
-  } else if (transactionType.toLowerCase() === "prepaid") {
-    incData = {
-      "details.moneyGiven": details["moneyGiven"],
-      "details.forQuantity": details["forQuantity"],
-    };
-  }
-
   // checking if material is previously added,
   // if it exists, returning duplicate data error
   const previousData = await InStockModel.findOneAndUpdate(
@@ -122,7 +105,10 @@ router.post("/add", async function (req, res) {
       $set: {
         "details.description": details["description"],
       },
-      $inc: incData,
+      $inc: {
+        "details.totalPrice": details["totalPrice"],
+        "details.broughtQuantity": details["broughtQuantity"],
+      },
     },
     {
       new: true,
