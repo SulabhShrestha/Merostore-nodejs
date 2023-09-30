@@ -7,7 +7,7 @@ const StoreModel = require("../models/store_model");
 /**
  * Retrieves all stocks including all stores
  *
- * Endpoint: GET /instock/{storeName}
+ * Endpoint: GET /instock/
  */
 router.get("/", async function (req, res) {
   const allData = await InStockModel.find({

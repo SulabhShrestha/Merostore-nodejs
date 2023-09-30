@@ -11,7 +11,9 @@ const StoreModel = require("../models/store_model");
  *
  */
 router.get("/", async function (req, res) {
-  const allData = await SalesModel.find();
+  const allData = await SalesModel.find({
+    uid: req.headers.authorization,
+  }).populate("storeId");
   res.json(allData);
 });
 
