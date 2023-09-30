@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 
 const SalesModel = require("../models/sales_model");
+const StoreModel = require("../models/store_model");
 
 /**
  * Retrieves all stocks including any storename
@@ -81,6 +82,8 @@ router.post("/add", async function (req, res) {
     transactionType: transactionType.toLowerCase(),
     storeName: storeName.toLowerCase(),
     details,
+    storeId: storeExists._id,
+    uid,
   });
 
   try {
