@@ -101,4 +101,23 @@ router.post("/add", async function (req, res) {
   }
 });
 
+// Deletes the sales
+router.delete("/:storeId/:salesId", async function (req, res) {
+  const storeId = req.params.storeId;
+  const salesId = req.params.salesId;
+  const userId = req.headers.authorization;
+
+  const deletedStock = await SalesModel.findOneAndDelete({
+    uid: userId,
+    storeId,
+    _id: salesId,
+  });
+
+  if (deletedStock) {
+    res.status(200).send("Deleted successfully.");
+  } else {
+    res.status(404).send("Stock not found.");
+  }
+});
+
 module.exports = router;
