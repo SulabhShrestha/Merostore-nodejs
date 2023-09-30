@@ -75,6 +75,7 @@ router.post("/add", async function (req, res) {
   const transactionType = req.body["transactionType"];
   const storeName = req.body["storeName"];
   const details = req.body["details"];
+  const uid = req.headers.authorization;
 
   // checking if it is empty
   if (!transactionType || !storeName || !details) {
@@ -83,9 +84,9 @@ router.post("/add", async function (req, res) {
   }
 
   // checking if store exists
-  const storeExists = await StoreModel.findOne({ storeName });
+  const storeExists = await StoreModel.findOne({ storeName, uid });
   if (!storeExists) {
-    res.status(400).send("Store doesn't exists.");
+    res.status(404).send("Store not found.");
     return;
   }
 

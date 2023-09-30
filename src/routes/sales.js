@@ -10,7 +10,6 @@ const SalesModel = require("../models/sales_model");
  *
  */
 router.get("/", async function (req, res) {
-
   const allData = await SalesModel.find();
   res.json(allData);
 });
@@ -56,11 +55,10 @@ router.get("/:currentDate/:storeName", async function (req, res) {
  * @body {"Transaction Type", "Store Name", "details"} - Json data of new material
  */
 router.post("/add", async function (req, res) {
-  console.log(req.body);
-
-  const transactionType = req.body["Transaction Type"];
-  const storeName = req.body["Store Name"];
+  const transactionType = req.body["transactionType"];
+  const storeName = req.body["storeName"];
   const details = req.body["details"];
+  const uid = req.headers.authorization;
 
   // checking if it is empty
   if (
@@ -72,13 +70,12 @@ router.post("/add", async function (req, res) {
     return;
   }
 
-  // checking if material is previously added,
-  // if it exists, values is updated
-
-  const ifExists = await SalesModel.findOne({
-    storeName,
-    "details.Material Name": details["Material Name"],
-  });
+  // checking if store exists
+  const storeExists = await StoreModel.findOne({ storeName, uid });
+  if (!storeExists) {
+    res.status(404).send("Store not found.");
+    return;
+  }
 
   const sales = new SalesModel({
     transactionType: transactionType.toLowerCase(),
