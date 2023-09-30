@@ -92,7 +92,12 @@ router.post("/add", async function (req, res) {
     const saveRes = await sales.save();
 
     if (saveRes) {
-      res.status(201).send("Saved successfully");
+      const newlyAddeddSales = await SalesModel.findOne({
+        uid: saveRes.uid,
+        _id: sales._id,
+      }).populate("storeId");
+
+      res.status(201).send(newlyAddeddSales);
     } else {
       res.status(500).send("Error occurred while saving the store.");
     }
