@@ -6,12 +6,37 @@ const StoreModel = require("../models/store_model");
 const Sales = require("../models/sales_model");
 
 /**
- * Retrieves all stocks including any storename
+ * Retrieves all sales including any storename
  *
  * Endpoint: GET /sales
  *
  */
 router.get("/", async function (req, res) {
+  // Get the current date and time
+  const currentDate = new Date();
+  // Set the time to the start of the day (12:00 AM)
+  currentDate.setHours(0, 0, 0, 0);
+
+  // Calculate the end of the day (12:00 AM of the next day)
+  const nextDay = new Date(currentDate);
+  nextDay.setDate(nextDay.getDate() + 1);
+
+  const allData = await SalesModel.find({
+    uid: req.headers.authorization,
+    createdAt: {
+      $gte: currentDate,
+    },
+  }).populate("storeId");
+
+  console.log(currentDate, nextDay);
+
+  res.json(allData);
+});
+
+/***
+ * Returns all sales
+ */
+router.get("/all", async function (req, res) {
   const allData = await SalesModel.find({
     uid: req.headers.authorization,
   }).populate("storeId");
