@@ -3,6 +3,7 @@ const router = express.Router();
 
 const SalesModel = require("../models/sales_model");
 const StoreModel = require("../models/store_model");
+const Sales = require("../models/sales_model");
 
 /**
  * Retrieves all stocks including any storename
@@ -120,6 +121,36 @@ router.delete("/:storeId/:salesId", async function (req, res) {
 
   if (deletedStock) {
     res.status(200).send("Deleted successfully.");
+  } else {
+    res.status(404).send("Stock not found.");
+  }
+});
+
+// update the sales
+router.patch("/:storeId/:salesId", async function (req, res) {
+  const storeId = req.params.storeId;
+  const salesId = req.params.salesId;
+  const userId = req.headers.authorization;
+
+  console.log(req.body);
+  console.log(storeId, salesId);
+
+  const updated = await SalesModel.findOneAndUpdate(
+    {
+      uid: userId,
+      storeId,
+      _id: salesId,
+    },
+    {
+      $set: req.body,
+    },
+    {
+      new: true,
+    }
+  ).populate("storeId");
+
+  if (updated) {
+    res.status(200).send(updated);
   } else {
     res.status(404).send("Stock not found.");
   }
